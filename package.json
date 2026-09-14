@@ -1,1 +1,19 @@
-{"name":"pitok-world","private":true,"scripts":{"dev":"next dev","build":"next build","start":"next start"},"dependencies":{"next":"14.0.0","react":"18.2.0","react-dom":"18.2.0","framer-motion":"10.16.0","lucide-react":"0.284.0"}}
+{
+  "name": "pitok-world-mainnet",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "14.0.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "typescript": "5.3.3",
+    "@types/node": "20.10.0",
+    "@types/react": "18.2.0"
+  }
+}
