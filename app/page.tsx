@@ -52,12 +52,22 @@ const fR=useRef<HTMLInputElement>(null);
 const vR=useRef<HTMLVideoElement>(null);
 
 useEffect(()=>{
+if(typeof window!== "undefined"){
 const s=document.createElement("script");
 s.src="https://sdk.minepi.com/pi-sdk.js";
+s.async=true;
 s.onload=()=>{
-window.Pi.init({version:"2.0",sandbox:false});
+console.log("Pi SDK loaded");
+if((window as any).Pi){
+(window as any).Pi.init({
+version:"2.0",
+sandbox:false
+});
+console.log("Pi init done");
+}
 };
-document.body.appendChild(s);
+document.head.appendChild(s);
+}
 },[]);
 
 useEffect(()=>{
@@ -66,21 +76,25 @@ vR.current?.play().catch(()=>{});
 
 const connectPi=async()=>{
 try{
-if(!window.Pi){
-alert("Open in Pi Browser! Get it from Play Store");
+console.log("Connect clicked");
+let pi=(window as any).Pi;
+if(!pi){
+alert("Pi SDK still loading... wait 3 sec and tap again!");
 return;
 }
-const scopes=['username','payments'];
-const res=await window.Pi.authenticate(
-scopes,
-(pay:any)=>{console.log(pay)}
-);
+const scopes=["username","payments","wallet_address"];
+function onIncPay(pay:any){
+console.log("Incomplete pay",pay);
+}
+const res=await pi.authenticate(scopes,onIncPay);
+console.log("Auth OK",res);
 setPiUser(res.user);
 setAuth(true);
 setBal(24.8);
-alert("Welcome "+res.user.username+"! Pi Connected 🟣");
-}catch(e){
-alert("Open this in Pi Browser!");
+alert("Welcome "+res.user.username+"! 🟣 Pi Connected!");
+}catch(e:any){
+console.log("Pi error",e);
+alert("Auth failed: "+(e?.message||e));
 }
 };
 
