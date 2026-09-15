@@ -1,102 +1,174 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useRef } from "react";
 
 const VIDEOS = [
-  { id: 1, user: "@africa_dance", likes: 12300, comments: 342, caption: "PITOK World is LIVE! 🌍", bg: "from-violet-600 to-blue-600", verified: true },
-  { id: 2, user: "@kampala_vibes", likes: 8900, comments: 201, caption: "Kampala to the world! 🚀", bg: "from-pink-600 to-orange-600", verified: false },
-  { id: 3, user: "@you.world", likes: 1200, comments: 12, caption: "Welcome to Pitok!", bg: "from-emerald-600 to-teal-600", verified: false },
+  { id: 1, user: "@crypto_king", name: "Alex Base", likes: "12.4K", desc: "First video on Pitok World! 🚀 #pitok #base #web3", song: "Original sound - pitokworld", color: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
+  { id: 2, user: "@pitok_queen", name: "Sarah", likes: "45.2K", desc: "How I made $500 on Pitok in 1 day 😱💸", song: "Viral sound - trending", color: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" },
+  { id: 3, user: "@web3builder", name: "Babu Pi", likes: "89.1K", desc: "Building decentralized TikTok on Base chain! 🌍", song: "Pitok anthem - official", color: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)" },
 ];
 
-export default function Page() {
-  const [idx, setIdx] = useState(0);
-  const [likedIds, setLikedIds] = useState<number[]>([]);
-  const [preview, setPreview] = useState<string|null>(null);
-  const [prog, setProg] = useState(0);
-  const [uploading, setUploading] = useState(false);
+export default function PitokMega() {
   const [showUpload, setShowUpload] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
-  const [showComments, setShowComments] = useState(false);
-  const [balance, setBalance] = useState(12.4);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [prog, setProg] = useState(0);
+  const [balance, setBalance] = useState(12.40);
+  const [liked, setLiked] = useState<number[]>([]);
+  const [current, setCurrent] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
-  const current = VIDEOS[idx];
-  const isLiked = likedIds.includes(current.id);
 
-  const toggleLike = () => {
-    if (isLiked) setLikedIds(likedIds.filter(id => id!== current.id));
-    else setLikedIds([...likedIds, current.id]);
+  const handleUpload = () => {
+    if (!preview) return alert("📤 Please select a video first!");
+    setUploading(true);
+    let p = 0;
+    const iv = setInterval(() => {
+      p += 8;
+      setProg(p);
+      if (p >= 100) {
+        clearInterval(iv);
+        setUploading(false);
+        setShowUpload(false);
+        setBalance(b => b + 0.5);
+        setPreview(null);
+        setProg(0);
+        alert("🚀 VIDEO LIVE ON PITOK WORLD! +$0.50 earned!");
+      }
+    }, 120);
   };
-  const handleFile = (f: File) => { setPreview(URL.createObjectURL(f)); };
-  const doUpload = () => {
-    if (!preview) return alert('Select video!');
-    setUploading(true); let p=0;
-    const iv=setInterval(()=>{ p+=10; setProg(p); if(p>=100){ clearInterval(iv); setUploading(false); setShowUpload(false); setPreview(null); setBalance(b=>b+0.5); alert('LIVE!'); } },150);
+
+  const toggleLike = (id: number) => {
+    setLiked(l => l.includes(id) ? l.filter(x => x !== id) : [...l, id]);
   };
 
   return (
-    <div className="min-h-screen bg-black text-white relative">
-      <div className="absolute top-0 w-full z-40 p-4 flex justify-between bg-gradient-to-b from-black/80 to-transparent">
-        <h1 className="font-black text-xl">PITOK<span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-pink-500">WORLD</span></h1>
-        <div className="flex gap-2">
-          <button onClick={()=>setShowUpload(true)} className="px-5 py-2 rounded-full bg-gradient-to-r from-amber-400 to-pink-600 font-black text-sm shadow-[0_0_20px_rgba(251,146,60,0.6)]">+ Upload</button>
-          <button onClick={()=>setShowProfile(true)} className="w-9 h-9 rounded-full bg-white/15">👤</button>
-        </div>
-      </div>        <div className="h-screen w-full relative bg-black">
-        <div className={`absolute inset-0 bg-gradient-to-br ${current.bg} flex flex-col justify-end`}>
-          <div className="absolute right-2 bottom-[110px] flex flex-col gap-5 items-center z-20">
-            <button onClick={toggleLike} className="flex flex-col items-center"><div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${isLiked?'bg-gradient-to-r from-pink-500 to-red-600':'bg-white/20'}`}>{isLiked?'❤️':'🤍'}</div><span className="text-xs font-bold mt-1">{current.likes}</span></button>
-            <button onClick={()=>setShowComments(true)} className="flex flex-col items-center"><div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">💬</div><span className="text-xs font-bold mt-1">{current.comments}</span></button>
-          </div>
-          <div className="p-4 pr-20 pb-20 bg-gradient-to-t from-black via-black/60 to-transparent">
-            <p className="font-black text-lg">{current.user}</p>
-            <p className="text-sm mt-1">{current.caption}</p>
-          </div>
-        </div>
+    <div style={{ minHeight: "100vh", background: "#000", color: "#fff", fontFamily: "system-ui", overflow: "hidden", position: "relative" }}>
+      
+      {/* MAIN FEED */}
+      <div style={{ height: "100vh", position: "relative", overflow: "hidden" }}>
+        {VIDEOS.map((v, idx) => (
+          <div key={v.id} style={{
+            position: "absolute", inset: 0,
+            background: v.color,
+            display: idx === current ? "flex" : "none",
+            flexDirection: "column",
+            transition: "all 0.3s"
+          }}>
+            {/* Top Bar */}
+            <div style={{ padding: "14px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", background: "linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)", zIndex: 10 }}>
+              <h1 style={{ fontWeight: 900, fontSize: "20px", letterSpacing: "-0.5px" }}>PITOK<span style={{ background: "linear-gradient(to right, #fbbf24, #ec4899)", WebkitBackgroundClip: "text", color: "transparent" }}>WORLD</span> 🌍</h1>
+              <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                <div style={{ padding: "6px 12px", borderRadius: "20px", background: "rgba(0,0,0,0.6)", border: "1px solid rgba(255,255,255,0.2)", fontSize: "12px", fontWeight: 700 }}>${balance.toFixed(2)}</div>
+                <button onClick={() => setShowUpload(true)} style={{ padding: "8px 16px", borderRadius: "20px", background: "linear-gradient(to right, #fbbf24, #f97316, #ec4899)", border: "none", color: "#fff", fontWeight: 900, fontSize: "13px", boxShadow: "0 0 20px rgba(251,146,60,0.5)", cursor: "pointer" }}>+ Upload</button>
+              </div>
+            </div>
 
-        {/* MEGA VISIT BUTTON - NO BLACK - 100% RAINBOW */}
-        <button onClick={()=>setShowUpload(true)} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 group px-10 py-4 rounded-full bg-gradient-to-r from-amber-300 via-orange-500 to-pink-600 font-black text-white text-xl shadow-[0_0_60px_rgba(245,158,11,1)] hover:scale-110 transition-all">
-          <span className="absolute inset-0 rounded-full bg-gradient-to-r from-amber-400 to-pink-600 blur-2xl opacity-80 -z-10 animate-pulse"></span>
-          🚀 VISIT NOW
-        </button>
+            {/* Video Center */}
+            <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
+              <div style={{ fontSize: "80px", filter: "drop-shadow(0 0 30px rgba(0,0,0,0.5))" }}>🎬</div>
+              <div style={{ marginTop: "20px", padding: "10px 20px", borderRadius: "30px", background: "rgba(0,0,0,0.4)", backdropFilter: "blur(10px)", fontSize: "12px", letterSpacing: "1px" }}>TAP • SWIPE FOR NEXT</div>
+            </div>
 
-        <div className="absolute bottom-0 w-full z-30 flex justify-around py-3 bg-black border-t border-white/10">
-          <span>🏠 Home</span><span>🔍</span><button onClick={()=>setShowUpload(true)} className="w-12 h-8 rounded-lg bg-gradient-to-r from-amber-400 to-pink-600 font-black">+</button><span>📥</span><button onClick={()=>setShowProfile(true)}>👤</button>
+            {/* Right Actions - TikTok Style */}
+            <div style={{ position: "absolute", right: "12px", bottom: "120px", display: "flex", flexDirection: "column", gap: "22px", alignItems: "center" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
+                <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: "#fff", border: "2px solid #fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>👤</div>
+                <div style={{ width: "22px", height: "22px", borderRadius: "50%", background: "#fe2c55", marginTop: "-12px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: 900 }}>+</div>
+              </div>
+              <div onClick={() => toggleLike(v.id)} style={{ display: "flex", flexDirection: "column", alignItems: "center", cursor: "pointer" }}>
+                <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: "rgba(255,255,255,0.15)", backdropFilter: "blur(10px)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "26px", transform: liked.includes(v.id) ? "scale(1.2)" : "scale(1)", transition: "0.2s" }}>{liked.includes(v.id) ? "❤️" : "🤍"}</div>
+                <span style={{ fontSize: "12px", fontWeight: 700, marginTop: "4px" }}>{v.likes}</span>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px" }}>💬</div>
+                <span style={{ fontSize: "12px", fontWeight: 700, marginTop: "4px" }}>2.1K</span>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px" }}>↗️</div>
+                <span style={{ fontSize: "12px", fontWeight: 700, marginTop: "4px" }}>Share</span>
+              </div>
+              <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: "linear-gradient(to bottom right, #333, #111)", border: "2px solid rgba(255,255,255,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", animation: "spin 3s linear infinite" }}>💿</div>
+            </div>
+
+            {/* Bottom Info */}
+            <div style={{ position: "absolute", bottom: "70px", left: "12px", right: "80px" }}>
+              <div style={{ fontWeight: 800, fontSize: "16px", marginBottom: "6px" }}>{v.user}</div>
+              <div style={{ fontSize: "14px", lineHeight: "1.3", opacity: 0.95, marginBottom: "10px" }}>{v.desc}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px" }}>🎵 <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{v.song}</span></div>
+              {/* Swipe Dots */}
+              <div style={{ display: "flex", gap: "6px", marginTop: "14px" }}>
+                {VIDEOS.map((_, i) => (
+                  <div key={i} onClick={() => setCurrent(i)} style={{ width: i === current ? "20px" : "6px", height: "6px", borderRadius: "10px", background: i === current ? "#fff" : "rgba(255,255,255,0.4)", cursor: "pointer", transition: "0.3s" }} />
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {/* Bottom Nav - TikTok */}
+        <div style={{ position: "absolute", bottom: 0, width: "100%", display: "flex", justifyContent: "space-around", alignItems: "center", padding: "10px 0 16px 0", background: "#000", borderTop: "1px solid rgba(255,255,255,0.1)", zIndex: 20 }}>
+          <span style={{ fontSize: "11px", textAlign: "center", opacity: 1, fontWeight: 700 }}>🏠<br/>Home</span>
+          <span style={{ fontSize: "11px", textAlign: "center", opacity: 0.6 }}>🔍<br/>Discover</span>
+          <button onClick={() => setShowUpload(true)} style={{ width: "48px", height: "32px", borderRadius: "8px", background: "linear-gradient(to right, #25F4EE, #FE2C55)", border: "none", color: "#000", fontWeight: 900, fontSize: "20px", cursor: "pointer" }}>+</button>
+          <span style={{ fontSize: "11px", textAlign: "center", opacity: 0.6 }}>📥<br/>Inbox</span>
+          <span onClick={() => setShowProfile(true)} style={{ fontSize: "11px", textAlign: "center", opacity: 0.6, cursor: "pointer" }}>👤<br/>You</span>
         </div>
       </div>
 
-      <AnimatePresence>
-        {showUpload && (
-          <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="fixed inset-0 z-[80] bg-black/85 backdrop-blur-xl flex items-center justify-center p-4">
-            <motion.div initial={{y:'100%'}} animate={{y:0}} exit={{y:'100%'}} className="w-full max-w-md bg-[#161616] rounded-[2rem] p-7 border border-white/10">
-              <div className="flex justify-between mb-6"><h2 className="text-xl font-black">Upload</h2><button onClick={()=>setShowUpload(false)} className="w-8 h-8 rounded-full bg-white/10">✕</button></div>
-              <input ref={fileRef} type="file" accept="video/*" hidden onChange={e=>e.target.files&&handleFile(e.target.files[0])}/>
-              <div onClick={()=>fileRef.current?.click()} className="border-2 border-dashed border-white/20 rounded-2xl p-8 text-center bg-white/5 cursor-pointer">{preview?<video src={preview} controls className="w-full rounded-xl"/>:<p>📤 Tap to select video</p>}</div>
-              {preview && <div className="mt-4 h-2 bg-white/10 rounded-full overflow-hidden"><div style={{width:`${prog}%`}} className="h-full bg-gradient-to-r from-amber-400 to-pink-600"/></div>}
-              <button disabled={uploading} onClick={doUpload} className="mt-6 w-full py-4 rounded-2xl bg-gradient-to-r from-amber-400 via-orange-500 to-pink-600 font-black text-white text-lg shadow-[0_0_40px_rgba(245,158,11,0.8)] hover:scale-[1.02] transition-all">
-                {uploading?`${prog}% UPLOADING...`:'🚀 VISIT NOW - GO LIVE!'}
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-        {showProfile && (
-          <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="fixed inset-0 z-[80] bg-black flex flex-col p-6 text-center">
-            <button onClick={()=>setShowProfile(false)} className="absolute top-5 left-5 text-2xl">←</button>
-            <div className="mt-16">
-              <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-r from-amber-400 to-pink-600 p-1"><div className="w-full h-full rounded-full bg-black flex items-center justify-center text-3xl">👤</div></div>
-              <h2 className="mt-4 text-2xl font-black">@you.world</h2>
-              <p className="opacity-60 text-sm">Kampala, Uganda 🇺🇬</p>
-              <div className="mt-6 bg-white/5 rounded-2xl p-4"><p className="text-xs opacity-50">Total Earned</p><p className="font-black text-xl text-amber-400">${balance.toFixed(2)}</p></div>
-              <button onClick={()=>{setShowProfile(false); setShowUpload(true);}} className="mt-6 w-full py-4 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-pink-600 font-black text-white text-lg shadow-[0_0_40px_rgba(245,158,11,0.9)] hover:scale-[1.02] transition-all">
-                🚀 VISIT PITOK WORLD
-              </button>
+      {/* UPLOAD MODAL - MEGA BEAUTIFUL */}
+      {showUpload && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 100, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(20px)", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+          <div style={{ width: "100%", maxWidth: "500px", background: "#121212", borderRadius: "24px 24px 0 0", padding: "24px", borderTop: "1px solid rgba(255,255,255,0.1)", maxHeight: "90vh", overflowY: "auto" }}>
+            <div style={{ width: "40px", height: "4px", background: "rgba(255,255,255,0.3)", borderRadius: "10px", margin: "0 auto 20px auto" }} />
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <h2 style={{ fontSize: "20px", fontWeight: 900 }}>Upload to Pitok 🌍</h2>
+              <button onClick={() => setShowUpload(false)} style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(255,255,255,0.1)", border: "none", color: "#fff", cursor: "pointer" }}>✕</button>
             </div>
-          </motion.div>
-        )}
-        {showComments && (
-          <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="fixed inset-0 z-[80] bg-black/60 flex items-end" onClick={()=>setShowComments(false)}>
-            <motion.div initial={{y:'100%'}} animate={{y:0}} exit={{y:'100%'}} onClick={e=>e.stopPropagation()} className="w-full bg-[#161616] rounded-t-[2rem] p-5 h-[50vh]"><h3 className="font-black mb-4">Comments</h3><p className="opacity-50">No comments yet!</p></motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+            <input ref={fileRef} type="file" accept="video/*" hidden onChange={e => e.target.files && setPreview(URL.createObjectURL(e.target.files[0]))} />
+            
+            <div onClick={() => fileRef.current?.click()} style={{ border: "2px dashed rgba(255,255,255,0.15)", borderRadius: "20px", padding: preview ? "0" : "40px 20px", textAlign: "center", background: "rgba(255,255,255,0.03)", cursor: "pointer", overflow: "hidden" }}>
+              {preview ? <video src={preview} controls style={{ width: "100%", maxHeight: "300px", borderRadius: "16px" }} /> : <><div style={{ fontSize: "48px", marginBottom: "10px" }}>📤</div><div style={{ fontWeight: 800, fontSize: "16px" }}>Tap to select video</div><div style={{ fontSize: "12px", opacity: 0.5, marginTop: "6px" }}>MP4, MOV max 100MB - 9:16 recommended</div></>}
+            </div>
+
+            {preview && (
+              <div style={{ marginTop: "16px" }}>
+                <div style={{ height: "8px", background: "rgba(255,255,255,0.1)", borderRadius: "20px", overflow: "hidden" }}><div style={{ width: `${prog}%`, height: "100%", background: "linear-gradient(to right, #fbbf24, #f97316, #ec4899)", transition: "0.2s" }} /></div>
+                <div style={{ fontSize: "12px", marginTop: "6px", opacity: 0.6, textAlign: "center" }}>{uploading ? `${prog}% UPLOADING TO BASE...` : "Ready to go live!"}</div>
+              </div>
+            )}
+
+            <button onClick={handleUpload} disabled={uploading} style={{
+              marginTop: "20px", width: "100%", padding: "18px", borderRadius: "50px",
+              background: uploading ? "#333" : "linear-gradient(to right, #fde68a, #f97316, #ec4899)",
+              color: "#fff", fontWeight: 900, fontSize: "18px", border: "none",
+              boxShadow: uploading ? "none" : "0 0 40px rgba(245,158,11,0.6), 0 0 80px rgba(236,72,153,0.3)",
+              cursor: "pointer", opacity: uploading ? 0.6 : 1
+            }}>
+              {uploading ? `⏳ ${prog}% UPLOADING...` : "🚀 VISIT NOW - GO LIVE & EARN $0.50"}
+            </button>
+            <div style={{ fontSize: "10px", textAlign: "center", opacity: 0.4, marginTop: "10px", letterSpacing: "1px" }}>POWERED BY BASE CHAIN • DECENTRALIZED</div>
+          </div>
+        </div>
+      )}
+
+      {/* PROFILE MODAL */}
+      {showProfile && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 100, background: "#000", display: "flex", flexDirection: "column", padding: "20px" }}>
+          <button onClick={() => setShowProfile(false)} style={{ alignSelf: "flex-start", padding: "8px 16px", borderRadius: "20px", background: "rgba(255,255,255,0.1)", border: "none", color: "#fff" }}>← Back</button>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
+            <div style={{ width: "90px", height: "90px", borderRadius: "50%", background: "linear-gradient(135deg, #fbbf24, #ec4899)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "40px", border: "3px solid #fff" }}>👤</div>
+            <h2 style={{ fontSize: "24px", fontWeight: 900, marginTop: "16px" }}>@babu_pi</h2>
+            <p style={{ opacity: 0.6, fontSize: "13px" }}>Founder • Pitok World on Base</p>
+            <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
+              <div><div style={{ fontWeight: 900, fontSize: "18px" }}>12</div><div style={{ fontSize: "12px", opacity: 0.6 }}>Following</div></div>
+              <div><div style={{ fontWeight: 900, fontSize: "18px" }}>8.4K</div><div style={{ fontSize: "12px", opacity: 0.6 }}>Followers</div></div>
+              <div><div style={{ fontWeight: 900, fontSize: "18px" }}>${balance.toFixed(2)}</div><div style={{ fontSize: "12px", opacity: 0.6 }}>Earned</div></div>
+            </div>
+            <button onClick={() => { setShowProfile(false); setShowUpload(true); }} style={{ marginTop: "30px", padding: "16px 40px", borderRadius: "50px", background: "linear-gradient(to right, #fbbf24, #ec4899)", border: "none", color: "#fff", fontWeight: 900, fontSize: "16px", boxShadow: "0 0 30px rgba(236,72,153,0.5)" }}>🚀 VISIT PITOK WORLD</button>
+          </div>
+        </div>
+      )}
     </div>
-  
+  );
+}
