@@ -92,19 +92,4 @@ export default function Home() {
               textAlign: "center",
               fontSize: "11px",
               marginTop: "8px",
-              opacity: 0.7
-            }}>
-              Connect Pi Wallet to earn Pi!
-            </div>
-          )}
-        </div>
-      </div>
-
-      <style>{`@keyframes pop{
-        0%{transform:translateY(0) scale(0);opacity:1}
-        50%{transform:translateY(-70px) scale(1.3);opacity:1}
-        100%{transform:translateY(-140px) scale(0.7);opacity:0}
-      }`}</style>
-    </div>
-  );
-      }
+              opacity
